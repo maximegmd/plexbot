@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nyaabot
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nyaabot
+    spec:
+      imagePullSecrets:
+      - name: "dockerhub"
+      volumes:
+      - name: plex-core
+        persistentVolumeClaim:
+          claimName: plex-core-claim
+      containers:
+      - name: nyaabot
+        image: yamashi/skyrim:nyaabot
+        imagePullPolicy: Always
+        env:
+        - name: QBT_URL
+          value: "http://qbittorrent:8080"
+        volumeMounts:
+        - name: plex-core
+          mountPath: /app/data
