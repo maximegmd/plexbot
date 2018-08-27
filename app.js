@@ -21,6 +21,8 @@ function Scan()
         {
             eztv.DownloadSeries(imdbIds).then(() => 
             {
+                console.log("save");
+
                 db.Save();
                     
                 // Scan every 30 minutes

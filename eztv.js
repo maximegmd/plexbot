@@ -35,7 +35,10 @@ module.exports = function(qbt, meta)
                 {
                     const obj = result[entry];
 
-                    if(obj.episode == episode && obj.season == season)
+                    const seStr = "S" + season.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "E" + episode.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+
+                    if((obj.episode == episode && obj.season == season) ||
+                        obj.title.includes(seStr))
                     {
                         // Remove this entry from the results
                         result.splice(entry, 1);
@@ -119,7 +122,7 @@ module.exports = function(qbt, meta)
                     return 0;
                 }
 
-                DownloadSeries(imdbIds).then(resolve());
+                module.DownloadSeries(imdbIds).then(() => { resolve(); });
             });
         });
     }
