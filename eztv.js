@@ -61,9 +61,9 @@ module.exports = function(qbt, meta)
                 if(found != null)
                 {
                     if(process.env.QBT_URL != undefined)
-                            qbt.add(obj.magnet_url, '/downloads/series/' + name + "/Season " + season);
+                            qbt.add(found.magnet_url, '/downloads/series/' + name + "/Season " + season);
                     else
-                        console.log(obj.magnet_url + "\n" + '/downloads/series/' + name + "/Season " + season);
+                        console.log(found.magnet_url + "\n" + '/downloads/series/' + name + "/Season " + season);
 
                     tryNext = true;
                     episode++;
