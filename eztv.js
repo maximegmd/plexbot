@@ -1,7 +1,7 @@
 const https = require('https');
 
-module.exports = function(qbt, meta) 
-{   
+module.exports = function(qbt, meta)
+{
     var module = {};
 
     function DownloadCallback(serie, name, result, page, callback)
@@ -12,7 +12,7 @@ module.exports = function(qbt, meta)
         }
         else
         {
-            var entry = 0;
+/*            var entry = 0;
             while(entry < result.length)
             {
                 const obj = result[entry];
@@ -22,8 +22,8 @@ module.exports = function(qbt, meta)
                 }
                 else
                     entry++;
-            }   
-
+            }
+*/
             episode = meta[serie.imdb_id]["episode"];
             season = meta[serie.imdb_id]["season"];
 
@@ -31,31 +31,45 @@ module.exports = function(qbt, meta)
             while(tryNext)
             {
                 tryNext = false;
+
+                // Look for an entry that matches the episode we want
+                var found = null;
+
+                const seStr = "S" + season.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "E" + episode.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+
                 for(var entry in result)
                 {
                     const obj = result[entry];
 
-                    const seStr = "S" + season.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "E" + episode.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-
                     if((obj.episode == episode && obj.season == season) ||
                         obj.title.includes(seStr))
                     {
+                        found = obj;
+
+                        // if the entry is 720p exit out and don't look for another quality
+                        if(found.filename.includes("720p") == true)
+                        {
+                            break;
+                        }
                         // Remove this entry from the results
                         result.splice(entry, 1);
 
-                        if(process.env.QBT_URL != undefined)
-                            qbt.add(obj.magnet_url, '/downloads/series/' + name + "/Season " + season);
-                        else
-                            console.log(obj.magnet_url + "\n" + '/downloads/series/' + name + "/Season " + season);
-                        
-                        tryNext = true;
-                        episode++;
-                        
-                        // Save the next season/episode we want to download
-                        meta[serie.imdb_id] = {'season': season, 'episode': episode};
-
                         break;
                     }
+                }
+
+                if(found != null)
+                {
+                    if(process.env.QBT_URL != undefined)
+                            qbt.add(obj.magnet_url, '/downloads/series/' + name + "/Season " + season);
+                    else
+                        console.log(obj.magnet_url + "\n" + '/downloads/series/' + name + "/Season " + season);
+
+                    tryNext = true;
+                    episode++;
+                    
+                    // Save the next season/episode we want to download
+                    meta[serie.imdb_id] = {'season': season, 'episode': episode};
                 }
 
                 if(tryNext == false && episode != 1)
