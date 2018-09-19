@@ -47,14 +47,12 @@ module.exports = function(qbt, meta)
                         found = obj;
 
                         // if the entry is 720p exit out and don't look for another quality
-                        if(found.filename.includes("720p") == true)
+                        if(found.filename.includes("720p") == true || found.filename.includes("1080p") == true)
                         {
                             break;
                         }
                         // Remove this entry from the results
                         result.splice(entry, 1);
-
-                        break;
                     }
                 }
 
